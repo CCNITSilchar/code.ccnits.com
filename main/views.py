@@ -4,7 +4,8 @@ from django.views.generic import View
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-
+import requests
+from django.conf import settings
 
 # Create your views here.
 
@@ -98,3 +99,38 @@ class ViewCode(TemplateView):
 			context['success'] = False
 
 		return context
+
+
+class CompileCode(View):
+
+	def post(self, request):
+		context = dict()
+		if request.is_ajax() and "slug" in request.POST:
+			success = True
+			slug = request.POST.get("slug")
+			try:
+				code = Code.objects.get(slug=slug)
+				data = {
+						'client_secret': settings.HE_CLIENT_SECRET,
+						'async': 0,
+						'source': code.code_text,
+						'lang': code.programming_language.lang_code,
+						'time_limit': 5,
+						'memory_limit': 262144,
+					}
+				r = requests.post(settings.HE_COMPILE_URL, data)
+				res = r.json()
+				code.he_slug = res['code_id']
+				code.save()
+				context['output'] = res['compile_status']
+			except Code.DoesNotExist:
+				success = False
+			except Exception:
+				success = False
+
+		return JsonResponse(context)
+
+	@method_decorator(csrf_exempt)
+	def dispatch(self, *args, **kwargs):
+		return super(CompileCode, self).dispatch(*args, **kwargs)
+

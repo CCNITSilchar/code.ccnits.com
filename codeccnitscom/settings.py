@@ -137,3 +137,5 @@ LOGIN_URL = '/'
 
 HE_CLIENT_ID = os.environ.get("codeccnitscom_heclientid")
 HE_CLIENT_SECRET = os.environ.get("codeccnitscom_heclientsecret")
+HE_COMPILE_URL = "https://api.hackerearth.com/v3/code/compile/"
+HE_RUN_URL = "https://api.hackerearth.com/v3/code/run/"

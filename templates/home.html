@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block page_css %}
     <style type="text/css" media="screen">
-        #editor {
+        #editor, #input_editor, #output_editor {
             position: relative;
             top: -15px;
             right: -1px;
@@ -39,13 +39,17 @@
             <div class="panel-heading">
                 Custom Input
             </div>
-            <div class="panel-body"></div>
+            <div class="panel-body">
+                <pre id="input_editor" style="height:185px; width:450px"></pre>
+            </div>
         </div>
         <div class="panel panel-default" style="height:225px">
             <div class="panel-heading">
                 Compilation Log / Output
             </div>
-            <div class="panel-body"></div>
+            <div class="panel-body">
+                <pre id="output_editor" style="height:185px; width:450px"></pre>
+            </div>
         </div>
     </div>
 
@@ -56,13 +60,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
+    var input_editor = ace.edit("input_editor");
+    var output_editor = ace.edit("output_editor");
     var EDITED = false;
     var SAVE_LOCK = false;
     editor.setTheme("ace/theme/twilight");
+    input_editor.setTheme("ace/theme/iplastic");
+    output_editor.setTheme("ace/theme/iplastic");
     editor.getSession().setMode("ace/mode/c_cpp");
+    input_editor.getSession().setMode("ace/mode/plain_text");
+    output_editor.getSession().setMode("ace/mode/plain_text");
     document.getElementById('editor').style.fontSize='14px';
+    document.getElementById('input_editor').style.fontSize='12px';
+    document.getElementById('output_editor').style.fontSize='12px';
     editor.getSession().setUseWrapMode(true);
     editor.setReadOnly(false);  // false to make it editable
+    output_editor.setReadOnly(true);
+    input_editor.setReadOnly(false);
     editor.$blockScrolling = Infinity
     $("#save").click(function(){
         EDITED = true;
@@ -86,6 +100,14 @@
     $("#language_select").change(function(){
         var item = $(this).val();
         set_language(item);
+    });
+    $("#compile").click(function(){
+        save_code();
+        compile_code();
+    });
+    $("#run").click(function(){
+        save_code()
+        run_code();
     });
     function set_language(item){
         $.ajax({
@@ -124,6 +146,38 @@
             });
         }
 
+    }
+    function compile_code(){
+        $("#compile").html("Compiling");
+        $.ajax({
+            type:'POST',
+            url:'/compile/',
+            dataType:"json",
+            data:{"slug":$("#hidden_slug").val()},
+            success:function(response){
+                if(response.success){
+                    //$("#hidden_slug").val(response.slug);
+                    $("#compile").html("Compiled");
+                    output_editor.getSession.setValue(response.output);
+                }
+            }
+        });
+    }
+    function run_code(){
+        $("#run").html("Running");
+        $.ajax({
+            type:'POST',
+            url:'/run/',
+            dataType:"json",
+            data:{"slug":$("#hidden_slug").val(), "custom_input":input_editor.getSession.getValue()},
+            success:function(response){
+                if(response.success){
+                    //$("#hidden_slug").val(response.slug);
+                    $("#compile").html("Executed");
+                    output_editor.getSession.setValue(response.output);
+                }
+            }
+        });
     }
 </script>
 {% endblock %}

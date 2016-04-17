@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^save_code/$', SaveCode.as_view(), name='SaveCode'),
     url(r'^(?P<slug>[\w\-]+)$', ViewCode.as_view(), name='ViewCode'),
     url(r'^(?P<slug>[\w\-]+)/$', ViewCode.as_view(), name='ViewCodeFull'),
+    url(r'^compile/$', CompileCode.as_view(), name='CompileCode'),
+    url(r'^run/$', CompileCode.as_view(), name='RunCode'),
 ]
