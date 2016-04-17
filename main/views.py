@@ -6,7 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import requests
 from django.conf import settings
-from django.views.decorators.cache import never_cache
+from django.template import loader, Context
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -179,3 +180,21 @@ class RunCode(View):
 
 	def get(self, request, *args, **kwargs):
 		return JsonResponse({})
+
+
+class DownloadCode(View):
+	def get(self, request, **kwargs):
+		if "slug" in kwargs:
+			slug = kwargs["slug"]
+			try:
+				code = Code.objects.get(slug=slug)
+				response = HttpResponse(content_type='text/plain')
+				response['Content-Disposition'] = 'attachment; filename="'+code.slug+'.'+code.programming_language.extension+'"'
+				t = loader.get_template('code.txt')
+				c = Context({'data': code.code_text,})
+				response.write(t.render(c))
+				return response
+			except Code.DoesNotExist:
+				return HttpResponse("Invalid Download!")
+		else:
+			return HttpResponse("Invalid Download!")
