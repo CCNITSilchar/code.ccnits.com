@@ -165,6 +165,7 @@ class RunCode(View):
 				r = requests.post(settings.HE_RUN_URL, data)
 				res = r.json()
 				code.he_slug = res['code_id']
+				code.run_count += 1
 				code.save()
 				context['output'] = res['run_status']['output']
 				context['time_taken'] = res['run_status']['time_used']
