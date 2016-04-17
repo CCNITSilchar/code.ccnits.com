@@ -20,10 +20,14 @@ from main.views import *
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', Home.as_view(), name='HomePage'),
-    url(r'^sample/$', Sample.as_view(), name='Sample'),
+    url(r'^sample$', Sample.as_view(), name='Sample'),
+    url(r'^sample/$', Sample.as_view(), name='SampleFull'),
     url(r'^save_code/$', SaveCode.as_view(), name='SaveCode'),
+    url(r'^save_code$', SaveCode.as_view(), name='SaveCodeFull'),
+    url(r'^compile$', CompileCode.as_view(), name='CompileCode'),
+    url(r'^run$', CompileCode.as_view(), name='RunCode'),
+    url(r'^compile/$', CompileCode.as_view(), name='CompileCodeFull'),
+    url(r'^run/$', CompileCode.as_view(), name='RunCodeFull'),
     url(r'^(?P<slug>[\w\-]+)$', ViewCode.as_view(), name='ViewCode'),
     url(r'^(?P<slug>[\w\-]+)/$', ViewCode.as_view(), name='ViewCodeFull'),
-    url(r'^compile/$', CompileCode.as_view(), name='CompileCode'),
-    url(r'^run/$', CompileCode.as_view(), name='RunCode'),
 ]

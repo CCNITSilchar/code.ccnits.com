@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import requests
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 
@@ -44,7 +45,7 @@ class Sample(View):
 
 
 class SaveCode(View):
-	def post(self, request):
+	def post(self, request, *args, **kwargs):
 		context = dict()
 		if request.is_ajax() and "lang_id" in request.POST:
 			success = True
@@ -77,6 +78,9 @@ class SaveCode(View):
 				context['success'] = False
 		return JsonResponse(context)
 
+	def get(self, request, *args, **kwargs):
+		return JsonResponse({})
+
 	@method_decorator(csrf_exempt)
 	def dispatch(self, *args, **kwargs):
 		return super(SaveCode, self).dispatch(*args, **kwargs)
@@ -102,8 +106,11 @@ class ViewCode(TemplateView):
 
 
 class CompileCode(View):
+	@method_decorator(csrf_exempt)
+	def dispatch(self, *args, **kwargs):
+		return super(CompileCode, self).dispatch(*args, **kwargs)
 
-	def post(self, request):
+	def post(self, request, *args, **kwargs):
 		context = dict()
 		if request.is_ajax() and "slug" in request.POST:
 			success = True
@@ -127,10 +134,8 @@ class CompileCode(View):
 				success = False
 			except Exception:
 				success = False
-
+			context['success'] = success
 		return JsonResponse(context)
 
-	@method_decorator(csrf_exempt)
-	def dispatch(self, *args, **kwargs):
-		return super(CompileCode, self).dispatch(*args, **kwargs)
-
+	def get(self, request, *args, **kwargs):
+		return JsonResponse({})

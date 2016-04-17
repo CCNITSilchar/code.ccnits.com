@@ -77,7 +77,9 @@
     editor.setReadOnly(false);  // false to make it editable
     output_editor.setReadOnly(true);
     input_editor.setReadOnly(false);
-    editor.$blockScrolling = Infinity
+    editor.$blockScrolling = Infinity;
+    input_editor.$blockScrolling = Infinity;
+    output_editor.$blockScrolling = Infinity;
     $("#save").click(function(){
         EDITED = true;
         $("#save").html("Saving...");
@@ -102,8 +104,7 @@
         set_language(item);
     });
     $("#compile").click(function(){
-        save_code();
-        compile_code();
+        save_code_compile();
     });
     $("#run").click(function(){
         save_code()
@@ -147,6 +148,28 @@
         }
 
     }
+    function save_code_compile(){
+        if(!SAVE_LOCK){
+            SAVE_LOCK = true;
+            $.ajax({
+                type:'POST',
+                url:'/save_code/',
+                dataType:"json",
+                data:{"lang_id":$("#language_select").val(),"code":editor.getSession().getValue(), "slug":$("#hidden_slug").val()},
+                success:function(response){
+                    if(response.success){
+                        $("#hidden_slug").val(response.slug);
+                        $("#save").html("Saved");
+                        SAVE_LOCK = false;
+                        $("#code_url_field").html("Code URL : <a href='http://localhost/"+response.slug+"' target='_blank'>http://localhost/"+response.slug+"</a>");
+                        $("#downloadLink").attr('href', 'http://localhost/download/'+response.slug+'/');
+                        compile_code();
+                    }
+                }
+            });
+        }
+
+    }
     function compile_code(){
         $("#compile").html("Compiling");
         $.ajax({
@@ -157,8 +180,8 @@
             success:function(response){
                 if(response.success){
                     //$("#hidden_slug").val(response.slug);
-                    $("#compile").html("Compiled");
-                    output_editor.getSession.setValue(response.output);
+                    $("#compile").html("<i class='fa fa-rocket'> Compile </i>");
+                    output_editor.setValue(response.output, 1);
                 }
             }
         });
@@ -173,8 +196,8 @@
             success:function(response){
                 if(response.success){
                     //$("#hidden_slug").val(response.slug);
-                    $("#compile").html("Executed");
-                    output_editor.getSession.setValue(response.output);
+                    $("#compile").html("<i class='fa fa-play'> Run </i>");
+                    output_editor.setValue(response.output, 1);
                 }
             }
         });
