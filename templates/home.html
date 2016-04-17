@@ -16,16 +16,19 @@
         <br/>
         <div class="panel panel-default" style="height:500px">
           <div class="panel-heading">
-              <select id="language_select" name="language" class="form-control" style="width:100px;">
+              <select id="language_select" name="language" class="form-control" style="width:150px;">
                   {% for language in languages %}
                         <option value="{{ language.id }}">{{ language.name }}</option>
                   {% endfor %}
               </select>
-              <button type="button" class="btn btn-primary navbar-btn pull-right" id="save">Save</button>
-              <a href="download/" class="pull-right"><i class="fa fa-download"> Download </i></a>
           </div>
           <div class="panel-body">
-            <pre id="editor" style="height:440px; width:750px"></pre>
+            <input type="hidden" value="" id="hidden_slug"/>
+            <pre id="editor" style="height:445px; width:750px">{{ sample_code }}</pre>
+          </div>
+          <div class="panel-footer">
+              <button type="button" class="btn btn-primary navbar-btn" id="save"> Save </button>
+              <a href="download/" ><i class="fa fa-download"> Download </i></a>
           </div>
         </div>
     </div>
@@ -36,27 +39,80 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
     var editor = ace.edit("editor");
+    var EDITED = false;
+    var SAVE_LOCK = false;
     editor.setTheme("ace/theme/twilight");
     editor.getSession().setMode("ace/mode/c_cpp");
     document.getElementById('editor').style.fontSize='14px';
     editor.getSession().setUseWrapMode(true);
     editor.setReadOnly(false);  // false to make it editable
-
+    editor.$blockScrolling = Infinity
     editor.commands.addCommand({
         name: 'saveCommand',
         bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-        exec: function(editor) {
-            // save the code; editor.getValue();
+        exec: function(exec_edit) {
+            EDITED = true;
+            $("#save").html("Saving...");
         },
     });
-
+    $("#save").click(function(){
+        EDITED = true;
+        $("#save").html("Saving...");
+        save_code();
+    });
+    editor.commands.addCommand({
+         name: 'saveCommand',
+         bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+         exec: function(editor) {
+             $("#save").html("Saving...");
+             save_code();
+         },
+    });
     $("#editor").bind("keyup change", function(e) {
-        // save the code; editor.getValue();
+        EDITED = true;
+        $("#save").html("Saving...");
+        save_code();
     });
 
     $("#language_select").change(function(){
         var item = $(this).val();
-
+        set_language(item);
     });
+    function set_language(item){
+        $.ajax({
+            type:'GET',
+            url:'/sample/',
+            data:"lang_id="+item,
+            success:function(response){
+                if(response.success){
+                    if(!EDITED){
+                        editor.setValue(response.sample);
+                        editor.getSession().setMode("ace/mode/"+response.ace_mode);
+                    }else{
+                        editor.getSession().setMode("ace/mode/"+response.ace_mode);
+                    }
+                }
+            }
+        });
+    }
+    function save_code(){
+        if(!SAVE_LOCK){
+            SAVE_LOCK = true;
+            $.ajax({
+                type:'POST',
+                url:'/save_code/',
+                dataType:"json",
+                data:{"lang_id":$("#language_select").val(),"code":editor.getSession().getValue(), "slug":$("#hidden_slug").val()},
+                success:function(response){
+                    if(response.success){
+                        $("#hidden_slug").val(response.slug);
+                        $("#save").html("Saved");
+                        SAVE_LOCK = false;
+                    }
+                }
+            });
+        }
+
+    }
 </script>
 {% endblock %}

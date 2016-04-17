@@ -7,6 +7,8 @@ class ProgrammingLanguage(models.Model):
 	name = models.CharField(max_length=50)
 	lang_code = models.CharField(max_length=50)
 	extension = models.CharField(max_length=10)
+	sample_code = models.TextField(null=True, blank=True)
+	ace_lang_code = models.CharField(max_length=50, blank=True, null=True)
 
 	def __str__(self):
 		return '%s' % self.name

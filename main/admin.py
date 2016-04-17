@@ -6,7 +6,7 @@ from main.models import *
 
 
 class ProgrammingLanguageAdmin(admin.ModelAdmin):
-	list_display = ['name', 'lang_code', 'extension']
+	list_display = ['name', 'lang_code', 'extension', 'sample_code']
 	search_fields = ('name', 'lang_code', 'extension')
 
 admin.site.register(ProgrammingLanguage, ProgrammingLanguageAdmin)
