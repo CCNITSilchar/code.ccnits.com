@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block page_css %}
+    <style type="text/css" media="screen">
+        #editor {
+            position: relative;
+            top: -15px;
+            right: 0;
+            bottom: 0;
+            left: -15px;
+        }
+    </style>
+{% endblock %}
+{% block main_page %}
+<div class="row">
+    <div class="col-md-8 col-sm-8 col-xs-12">
+        <br/>
+        <div class="panel panel-default" style="height:500px">
+          <div class="panel-heading">
+              <select id="language_select" name="language" class="form-control" style="width:100px;">
+                  {% for language in languages %}
+                        <option value="{{ language.id }}">{{ language.name }}</option>
+                  {% endfor %}
+              </select>
+              <button type="button" class="btn btn-primary navbar-btn pull-right" id="save">Save</button>
+              <a href="download/" class="pull-right"><i class="fa fa-download"> Download </i></a>
+          </div>
+          <div class="panel-body">
+            <pre id="editor" style="height:440px; width:750px"></pre>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.getSession().setMode("ace/mode/c_cpp");
+    document.getElementById('editor').style.fontSize='14px';
+    editor.getSession().setUseWrapMode(true);
+    editor.setReadOnly(false);  // false to make it editable
+
+    editor.commands.addCommand({
+        name: 'saveCommand',
+        bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+        exec: function(editor) {
+            // save the code; editor.getValue();
+        },
+    });
+
+    $("#editor").bind("keyup change", function(e) {
+        // save the code; editor.getValue();
+    });
+
+    $("#language_select").change(function(){
+        var item = $(this).val();
+
+    });
+</script>
+{% endblock %}
