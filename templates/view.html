@@ -13,6 +13,7 @@
 {% endblock %}
 {% block main_page %}
 <div class="row">
+    {% if success %}
     <div class="col-md-7 col-sm-7 col-xs-12">
         <div class="panel panel-default" style="height:500px">
           <div class="panel-heading">
@@ -58,7 +59,9 @@
             </div>
         </div>
     </div>
-
+    {% else %}
+    <center><h3>OOOPS! Invalid URL ?</h3></center>
+    {% endif %}
 </div>
 {% endblock %}
 

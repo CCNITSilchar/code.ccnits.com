@@ -19,7 +19,17 @@ class Home(TemplateView):
 		context = super(Home, self).get_context_data(**kwargs)
 		programming_languages = ProgrammingLanguage.objects.order_by('name').filter()
 		context["languages"] = programming_languages
-		context["sample_code"] = programming_languages[0].sample_code
+		if "slug" in kwargs:
+			slug = kwargs["slug"]
+			try:
+				code = Code.objects.get(slug=slug)
+				programming_language = code.programming_language
+				context["sample_code"] = code.code_text
+				context["language"] = programming_language
+			except Code.DoesNotExist:
+				pass
+		else:
+			context["sample_code"] = programming_languages[0].sample_code
 		return context
 
 
@@ -198,3 +208,4 @@ class DownloadCode(View):
 				return HttpResponse("Invalid Download!")
 		else:
 			return HttpResponse("Invalid Download!")
+

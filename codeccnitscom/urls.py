@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^compile', CompileCode.as_view(), name='CompileCode'),
     url(r'^run', RunCode.as_view(), name='RunCode'),
     url(r'^download/(?P<slug>[\w\-]+)', DownloadCode.as_view(), name='DownloadCode'),
+    url(r'^clone/(?P<slug>[\w\-]+)', Home.as_view(), name='CloneCode'),
     url(r'^(?P<slug>[\w\-]+)', ViewCode.as_view(), name='ViewCode'),
 ]

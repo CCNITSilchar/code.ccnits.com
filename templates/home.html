@@ -17,8 +17,8 @@
         <div class="panel panel-default" style="height:500px">
           <div class="panel-heading">
               <select id="language_select" name="language" class="form-control" style="width:150px;">
-                  {% for language in languages %}
-                        <option value="{{ language.id }}">{{ language.name }}</option>
+                  {% for lang in languages %}
+                        <option value="{{ lang.id }}" {% if lang == language %} selected {% endif %}>{{ lang.name }}</option>
                   {% endfor %}
               </select>
           </div>
