@@ -53,6 +53,8 @@ var editor = ace.edit("editor");
                     //$("#hidden_slug").val(response.slug);
                     $("#run").html("<i class='fa fa-play'> Run </i>");
                     output_editor.setValue(response.output, 1);
+                    $("#time_taken").html(response.time_taken);
+                    $("#memory_taken").html(response.memory_taken);
                 }
             }
         });

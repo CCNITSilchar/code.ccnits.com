@@ -167,6 +167,8 @@ class RunCode(View):
 				code.he_slug = res['code_id']
 				code.save()
 				context['output'] = res['run_status']['output']
+				context['time_taken'] = res['run_status']['time_used']
+				context['memory_taken'] = res['run_status']['memory_used']
 			except Code.DoesNotExist:
 				success = False
 			except Exception:
