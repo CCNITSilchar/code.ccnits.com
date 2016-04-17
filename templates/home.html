@@ -4,7 +4,7 @@
         #editor {
             position: relative;
             top: -15px;
-            right: 0;
+            right: -1px;
             bottom: 0;
             left: -15px;
         }
@@ -12,8 +12,7 @@
 {% endblock %}
 {% block main_page %}
 <div class="row">
-    <div class="col-md-8 col-sm-8 col-xs-12">
-        <br/>
+    <div class="col-md-7 col-sm-7 col-xs-12">
         <div class="panel panel-default" style="height:500px">
           <div class="panel-heading">
               <select id="language_select" name="language" class="form-control" style="width:150px;">
@@ -24,14 +23,32 @@
           </div>
           <div class="panel-body">
             <input type="hidden" value="" id="hidden_slug"/>
-            <pre id="editor" style="height:445px; width:750px">{{ sample_code }}</pre>
+            <pre id="editor" style="height:446px; width:650px">{{ sample_code }}</pre>
           </div>
           <div class="panel-footer">
               <button type="button" class="btn btn-primary navbar-btn" id="save"> Save </button>
+              <button type="button" class="btn btn-warning navbar-btn" id="compile"><i class="fa fa-rocket"> Compile </i></button>
+              <button type="button" class="btn btn-success navbar-btn" id="run"><i class="fa fa-play"> Run </i></button>
               <a href="download/" ><i class="fa fa-download"> Download </i></a>
           </div>
         </div>
     </div>
+    <div class="col-md-5 col-sm-5 col-xs-12">
+        <h5 id="code_url_field">Save code atleast once to generate code shareable URL.</h5>
+        <div class="panel panel-default" style="height:225px">
+            <div class="panel-heading">
+                Custom Input
+            </div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-default" style="height:225px">
+            <div class="panel-heading">
+                Compilation Log / Output
+            </div>
+            <div class="panel-body"></div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 
@@ -108,6 +125,7 @@
                         $("#hidden_slug").val(response.slug);
                         $("#save").html("Saved");
                         SAVE_LOCK = false;
+                        $("#code_url_field").html("Code shareable URL : <a href='http://localhost/"+response.slug+"' target='_blank'>http://localhost/"+response.slug+"</a>");
                     }
                 }
             });
