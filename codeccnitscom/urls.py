@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^$', Home.as_view(), name='HomePage'),
     url(r'^sample/$', Sample.as_view(), name='Sample'),
     url(r'^save_code/$', SaveCode.as_view(), name='SaveCode'),
+    url(r'^(?P<slug>[\w\-]+)$', ViewCode.as_view(), name='ViewCode'),
+    url(r'^(?P<slug>[\w\-]+)/$', ViewCode.as_view(), name='ViewCodeFull'),
 ]

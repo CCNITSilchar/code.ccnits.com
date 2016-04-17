@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block page_css %}
+    <style type="text/css" media="screen">
+        #editor {
+            position: relative;
+            top: -15px;
+            right: -1px;
+            bottom: 0;
+            left: -15px;
+        }
+    </style>
+{% endblock %}
+{% block main_page %}
+<div class="row">
+    <div class="col-md-7 col-sm-7 col-xs-12">
+        <div class="panel panel-default" style="height:500px">
+          <div class="panel-heading">
+              <select id="language_select" name="language" class="form-control" style="width:150px;" disabled>
+                        <option value="{{ code.programming_language.id }}" selected>{{ code.programming_language.name }}</option>
+              </select>
+          </div>
+          <div class="panel-body">
+            <input type="hidden" value="{{ code.slug }}" id="hidden_slug"/>
+            <pre id="editor" style="height:446px; width:650px">{{ code.code_text }}</pre>
+          </div>
+          <div class="panel-footer">
+              <a href="/clone/{{ code.slug }}/"><button type="button" class="btn btn-primary navbar-btn" id="clone"> Clone </button></a>
+              <button type="button" class="btn btn-warning navbar-btn" id="compile"><i class="fa fa-rocket"> Compile </i></button>
+              <button type="button" class="btn btn-success navbar-btn" id="run"><i class="fa fa-play"> Run </i></button>
+              <a id="downloadLink" href="download/{{ code.slug }}/" ><i class="fa fa-download"> Download </i></a>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-5 col-sm-5 col-xs-12">
+        <h5 id="code_url_field">Code URL : <a href="http://localhost/{{ code.slug }}">http://localhost/{{ code.slug }}</a></h5>
+        <div class="panel panel-default" style="height:225px">
+            <div class="panel-heading">
+                Custom Input
+            </div>
+            <div class="panel-body"></div>
+        </div>
+        <div class="panel panel-default" style="height:225px">
+            <div class="panel-heading">
+                Compilation Log / Output
+            </div>
+            <div class="panel-body"></div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    var EDITED = false;
+    var SAVE_LOCK = false;
+    editor.setTheme("ace/theme/twilight");
+    editor.getSession().setMode("ace/mode/{{ code.programming_language.ace_lang_code }}");
+    document.getElementById('editor').style.fontSize='14px';
+    editor.getSession().setUseWrapMode(true);
+    editor.setReadOnly(true);
+    editor.$blockScrolling = Infinity
+</script>
+{% endblock %}

@@ -29,12 +29,12 @@
               <button type="button" class="btn btn-primary navbar-btn" id="save"> Save </button>
               <button type="button" class="btn btn-warning navbar-btn" id="compile"><i class="fa fa-rocket"> Compile </i></button>
               <button type="button" class="btn btn-success navbar-btn" id="run"><i class="fa fa-play"> Run </i></button>
-              <a href="download/" ><i class="fa fa-download"> Download </i></a>
+              <a id="downloadLink" href="#"><i class="fa fa-download"> Download </i></a>
           </div>
         </div>
     </div>
     <div class="col-md-5 col-sm-5 col-xs-12">
-        <h5 id="code_url_field">Save code atleast once to generate code shareable URL.</h5>
+        <h5 id="code_url_field">Save code atleast once to generate Code URL.</h5>
         <div class="panel panel-default" style="height:225px">
             <div class="panel-heading">
                 Custom Input
@@ -64,14 +64,6 @@
     editor.getSession().setUseWrapMode(true);
     editor.setReadOnly(false);  // false to make it editable
     editor.$blockScrolling = Infinity
-    editor.commands.addCommand({
-        name: 'saveCommand',
-        bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-        exec: function(exec_edit) {
-            EDITED = true;
-            $("#save").html("Saving...");
-        },
-    });
     $("#save").click(function(){
         EDITED = true;
         $("#save").html("Saving...");
@@ -125,7 +117,8 @@
                         $("#hidden_slug").val(response.slug);
                         $("#save").html("Saved");
                         SAVE_LOCK = false;
-                        $("#code_url_field").html("Code shareable URL : <a href='http://localhost/"+response.slug+"' target='_blank'>http://localhost/"+response.slug+"</a>");
+                        $("#code_url_field").html("Code URL : <a href='http://localhost/"+response.slug+"' target='_blank'>http://localhost/"+response.slug+"</a>");
+                        $("#downloadLink").attr('href', 'http://localhost/download/'+response.slug+'/');
                     }
                 }
             });

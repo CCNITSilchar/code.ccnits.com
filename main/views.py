@@ -4,6 +4,8 @@ from django.views.generic import View
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
+
 # Create your views here.
 
 
@@ -19,7 +21,6 @@ class Home(TemplateView):
 
 
 class Sample(View):
-
 	def get(self, request):
 		context = dict()
 		if request.is_ajax() and "lang_id" in request.GET:
@@ -42,7 +43,6 @@ class Sample(View):
 
 
 class SaveCode(View):
-
 	def post(self, request):
 		context = dict()
 		if request.is_ajax() and "lang_id" in request.POST:
@@ -81,6 +81,20 @@ class SaveCode(View):
 		return super(SaveCode, self).dispatch(*args, **kwargs)
 
 
+class ViewCode(TemplateView):
+	template_name = "view.html"
 
+	def get_context_data(self, **kwargs):
+		context = super(ViewCode, self).get_context_data(**kwargs)
+		context['success'] = True
+		if "slug" in kwargs:
+			try:
+				code = Code.objects.get(slug=kwargs["slug"])
+				context['success'] = True
+				context['code'] = code
+			except Code.DoesNotExist:
+				context['success'] = False
+		else:
+			context['success'] = False
 
-
+		return context
