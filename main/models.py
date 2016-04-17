@@ -23,6 +23,7 @@ class Code(models.Model):
 	run_count = models.IntegerField(default=0)
 	public = models.BooleanField(default=True)
 	programming_language = models.ForeignKey(ProgrammingLanguage)
+	custom_input = models.TextField(null=True, blank=True)
 	creation_timestamp = models.DateTimeField(auto_now=False, auto_now_add=True, null=True, blank=True)
 	update_timestamp = models.DateTimeField(auto_now=True, null=True, blank=True)
 

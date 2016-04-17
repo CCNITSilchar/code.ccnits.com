@@ -26,6 +26,7 @@ class Home(TemplateView):
 				programming_language = code.programming_language
 				context["sample_code"] = code.code_text
 				context["language"] = programming_language
+				context["custom_input"] = code.custom_input
 			except Code.DoesNotExist:
 				pass
 		else:
@@ -177,6 +178,7 @@ class RunCode(View):
 				res = r.json()
 				code.he_slug = res['code_id']
 				code.run_count += 1
+				code.custom_input = data["input"]
 				code.save()
 				context['output'] = res['run_status']['output']
 				context['time_taken'] = res['run_status']['time_used']
