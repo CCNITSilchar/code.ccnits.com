@@ -1,5 +1,5 @@
 from django.db import models
-
+from functions import slug
 # Create your models here.
 
 
@@ -17,7 +17,7 @@ class Code(models.Model):
 	slug = models.CharField(max_length=8, null=True, blank=True, unique=True)
 	he_slug = models.CharField(max_length=8, null=True, blank=True, unique=True)
 	code_text = models.TextField(null=True, blank=True)
-	cloned_from = models.ForeignKey("self")
+	cloned_from = models.ForeignKey("self", blank=True, null=True)
 	run_count = models.IntegerField(default=0)
 	public = models.BooleanField(default=True)
 	programming_language = models.ForeignKey(ProgrammingLanguage)
@@ -26,3 +26,8 @@ class Code(models.Model):
 
 	def __str__(self):
 		return '%s' % self.name
+
+	def save(self, *args, **kwargs):
+		super(Code, self).save(*args, **kwargs)
+		self.slug = slug.encode(self.id)
+		super(Code, self).save(*args, **kwargs)
