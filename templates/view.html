@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="col-md-5 col-sm-5 col-xs-12">
-        <h5 id="code_url_field">Save code atleast once to generate Code URL.</h5>
+        <h5 id="code_url_field">Code URL : <a href="http://localhost/{{ code.slug }}">http://localhost/{{ code.slug }}</a></h5>
         <div class="panel panel-default" style="height:225px">
             <div class="panel-heading">
                 Custom Input
@@ -65,7 +65,7 @@
     editor.setTheme("ace/theme/twilight");
     input_editor.setTheme("ace/theme/iplastic");
     output_editor.setTheme("ace/theme/iplastic");
-    editor.getSession().setMode("ace/mode/c_cpp");
+    editor.getSession().setMode("ace/mode/{{ code.programming_language.ace_lang_code }}");
     input_editor.getSession().setMode("ace/mode/plain_text");
     output_editor.getSession().setMode("ace/mode/plain_text");
     document.getElementById('editor').style.fontSize='14px';
