@@ -139,3 +139,40 @@ class CompileCode(View):
 
 	def get(self, request, *args, **kwargs):
 		return JsonResponse({})
+
+
+class RunCode(View):
+	@method_decorator(csrf_exempt)
+	def dispatch(self, *args, **kwargs):
+		return super(RunCode, self).dispatch(*args, **kwargs)
+
+	def post(self, request, *args, **kwargs):
+		context = dict()
+		if request.is_ajax() and "slug" in request.POST:
+			success = True
+			slug = request.POST.get("slug")
+			try:
+				code = Code.objects.get(slug=slug)
+				data = {
+						'client_secret': settings.HE_CLIENT_SECRET,
+						'async': 0,
+						'source': code.code_text,
+						'lang': code.programming_language.lang_code,
+						'input': request.POST.get("custom_input"),
+						'time_limit': 5,
+						'memory_limit': 262144,
+					}
+				r = requests.post(settings.HE_RUN_URL, data)
+				res = r.json()
+				code.he_slug = res['code_id']
+				code.save()
+				context['output'] = res['run_status']['output']
+			except Code.DoesNotExist:
+				success = False
+			except Exception:
+				success = False
+			context['success'] = success
+		return JsonResponse(context)
+
+	def get(self, request, *args, **kwargs):
+		return JsonResponse({})
